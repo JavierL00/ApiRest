@@ -19,13 +19,8 @@ export const getUser = async (req: Request, res: Response) => {
     } else {
         res.status(404).json({
             msg: `No existe el usuario de id ${id}`
-        })
+        });
     }
-
-    res.json({
-        msg: 'getUser',
-        id
-    })
 }
 
 export const createUser = async (req: Request, res: Response) => {
@@ -38,18 +33,18 @@ export const createUser = async (req: Request, res: Response) => {
         }
     });
 
-    if(verifyEmail) {
+    if (verifyEmail) {
         return res.status(404).json({
-            msg: 'Ya existe un usuario con el email ' + body.email
+            msg: `Ya existe un usuario con el email ${body.email}`
         })
     }
 
     try {
 
-        const user = new User(body);
+        const user = User.build(body);
         await user.save();
 
-        res.json( user );
+        res.json(user);
 
     } catch (error) {
 
@@ -67,17 +62,17 @@ export const updateUser = async (req: Request, res: Response) => {
     const { body } = req;
 
     try {
-        
-        const user = await User.findByPk( id );
-        if(!user) {
+
+        const user = await User.findByPk(id);
+        if (!user) {
             return res.status(404).json({
-                msg: 'No existe un usuario con el id: ' + id
+                msg: `No existe un usuario con el id ${id}`
             });
         }
 
-        await user.update( body );
+        await user.update(body);
 
-        res.json( user );
+        res.json(user);
 
     } catch (error) {
 
@@ -90,12 +85,18 @@ export const updateUser = async (req: Request, res: Response) => {
 
 }
 
-export const deleteUser = (req: Request, res: Response) => {
+export const deleteUser = async(req: Request, res: Response) => {
 
     const { id } = req.params;
 
-    res.json({
-        msg: 'deleteUsers',
-        id
-    })
+    const user = await User.findByPk(id);
+    if(!user) {
+        return res.status(404).json({
+            msg: `No existe un usuario con el id ${id}`
+        })
+    }
+
+    await user.destroy();
+
+    res.json(user)
 }

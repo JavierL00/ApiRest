@@ -1,8 +1,8 @@
 import { Sequelize } from 'sequelize';
 
-const db = new Sequelize('node', 'diars_user', '123456', {
+const db = new Sequelize('node', 'root', 'mysql', {
     host: 'localhost',
-    dialect: 'mssql',
+    dialect: 'mysql',
     // logging: false,
 });
 
